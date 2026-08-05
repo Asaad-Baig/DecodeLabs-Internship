@@ -1,0 +1,119 @@
+import tkinter as tk
+from tkinter import messagebox
+
+
+class ExpenseTrackerApp:
+
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Expense Tracker")
+        self.root.geometry("350x400")
+        self.root.configure(bg="#e0f2fe")
+
+        self.total_spent = 0.0
+
+        title_label = tk.Label(
+            root,
+            text="EXPENSE TRACKER",
+            font=("Helvetica", 18, "bold"),
+            fg="#2d5a27",
+            bg="#e0f2fe",
+            pady=15,
+        )
+        title_label.pack()
+
+        input_frame = tk.Frame(root, bg="#e0f2fe")
+        input_frame.pack(pady=10)
+
+        entry_label = tk.Label(
+            input_frame,
+            text="Enter Expense Amount (Pkr):",
+            font=("Helvetica", 11),
+            bg="#e0f2fe",
+        )
+        entry_label.pack(anchor="w")
+
+        self.expense_entry = tk.Entry(
+            input_frame, font=("Helvetica", 12), width=20
+        )
+        self.expense_entry.pack(pady=5)
+        self.expense_entry.focus()  # Set initial focus
+
+        add_btn = tk.Button(
+            root,
+            text="Add Expense",
+            font=("Helvetica", 11, "bold"),
+            bg="#4caf50",
+            fg="white",
+            activebackground="#45a049",
+            activeforeground="white",
+            padx=10,
+            pady=5,
+            command=self.add_expense,
+        )
+        add_btn.pack(pady=10)
+
+        reset_btn = tk.Button(
+            root,
+            text="Reset Total",
+            font=("Helvetica", 9),
+            bg="#f44336",
+            fg="white",
+            activebackground="#da190b",
+            activeforeground="white",
+            command=self.reset_total,
+        )
+        reset_btn.pack(pady=5)
+
+        self.total_label = tk.Label(
+            root,
+            text="Total Spent: Pkr0.00",
+            font=("Helvetica", 14, "bold"),
+            fg="#1e293b",
+            bg="#e0f2fe",
+            pady=20,
+        )
+        self.total_label.pack()
+
+        self.root.bind("<Return>", lambda event: self.add_expense())
+
+    def add_expense(self):
+        user_input = self.expense_entry.get().strip()
+
+        if not user_input:
+            messagebox.showwarning(
+                "Input Error", "Please enter an expense amount."
+            )
+            return
+
+        try:
+            expense = float(user_input)
+
+            if expense <= 0:
+                messagebox.showwarning(
+                    "Input Error", "Expense amount must be greater than zero."
+                )
+                return
+
+            self.total_spent += expense
+
+            self.total_label.config(
+                text=f"Total Spent: Pkr{self.total_spent:,.2f}"
+            )
+            self.expense_entry.delete(0, tk.END)
+
+        except ValueError:
+            messagebox.showerror(
+                "Invalid Input", "Please enter a valid numeric value."
+            )
+
+    def reset_total(self):
+        self.total_spent = 0.0
+        self.total_label.config(text="Total Spent: Pkr0.00")
+        self.expense_entry.delete(0, tk.END)
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ExpenseTrackerApp(root)
+    root.mainloop()
