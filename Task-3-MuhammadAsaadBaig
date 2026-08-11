@@ -1,0 +1,71 @@
+import random
+import secrets
+import string
+import tkinter as tk
+from tkinter import messagebox
+
+
+def generate_password():
+    length_str = entry_length.get()
+
+    if not length_str.isdigit():
+        messagebox.showerror(
+            "Invalid Input", "Please enter a valid positive integer."
+        )
+        return
+
+    length = int(length_str)
+    if length < 4:
+        messagebox.showwarning(
+            "Short Length", "Password length should be at least 4 characters."
+        )
+        return
+
+    characters = string.ascii_letters + string.digits
+
+    password = [
+        secrets.choice(string.ascii_letters),
+        secrets.choice(string.digits),
+    ]
+
+    password += [secrets.choice(characters) for _ in range(length - 2)]
+
+    random.shuffle(password)
+
+    final_password = "".join(password)
+    entry_result.config(state="normal")
+    entry_result.delete(0, tk.END)
+    entry_result.insert(0, final_password)
+    entry_result.config(state="readonly")
+
+
+root = tk.Tk()
+root.title("Password Generator")
+root.geometry("380x220")
+root.resizable(False, False)
+root.configure(padx=20, pady=20)
+
+lbl_length = tk.Label(root, text="Password Length:", font=("Arial", 10))
+lbl_length.pack(anchor="w", pady=(0, 5))
+
+entry_length = tk.Entry(root, font=("Arial", 11), width=10)
+entry_length.insert(0, "8")
+entry_length.pack(anchor="w", pady=(0, 15))
+
+btn_generate = tk.Button(
+    root,
+    text="Generate Password",
+    font=("Arial", 10, "bold"),
+    bg="#4CAF50",
+    fg="white",
+    command=generate_password,
+)
+btn_generate.pack(fill="x", pady=(0, 15))
+
+lbl_result = tk.Label(root, text="Generated Password:", font=("Arial", 10))
+lbl_result.pack(anchor="w", pady=(0, 5))
+
+entry_result = tk.Entry(root, font=("Consolas", 11), state="readonly")
+entry_result.pack(fill="x")
+
+root.mainloop()
